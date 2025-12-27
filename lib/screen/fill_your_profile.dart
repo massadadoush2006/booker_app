@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
-
 TextEditingController First_Name = TextEditingController();
 TextEditingController Last_Name = TextEditingController();
 TextEditingController Date_of_birth = TextEditingController();
@@ -24,43 +23,44 @@ class _fill_profileState extends State<fill_profile> {
   File? idImage;
 
   Future<void> pickImage(bool isPersonal) async {
-  final picker = ImagePicker();
+    final picker = ImagePicker();
 
-  final source = await showDialog<ImageSource>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text("chooese "),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.camera_alt),
-            title: const Text("camera"),
-            onTap: () => Navigator.pop(context, ImageSource.camera),
-          ),
-          ListTile(
-            leading: const Icon(Icons.photo_library),
-            title: const Text("albom"),
-            onTap: () => Navigator.pop(context, ImageSource.gallery),
-          ),
-        ],
+    final source = await showDialog<ImageSource>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("chooese "),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text("camera"),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text("albom"),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
 
-  if (source != null) {
-    final pickedFile = await picker.pickImage(source: source);
-    if (pickedFile != null) {
-      setState(() {
-        if (isPersonal) {
-          personalImage = File(pickedFile.path);
-        } else {
-          idImage = File(pickedFile.path);
-        }
-      });
+    if (source != null) {
+      final pickedFile = await picker.pickImage(source: source);
+      if (pickedFile != null) {
+        setState(() {
+          if (isPersonal) {
+            personalImage = File(pickedFile.path);
+          } else {
+            idImage = File(pickedFile.path);
+          }
+        });
+      }
     }
   }
-}
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -74,7 +74,11 @@ class _fill_profileState extends State<fill_profile> {
           ),
           title: const Text(
             "Fill Your Profile",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
           ),
           centerTitle: true,
         ),
@@ -85,9 +89,9 @@ class _fill_profileState extends State<fill_profile> {
                 const SnackBar(content: Text(" profile is saved  ")),
               );
             } else if (state is ProfileFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.error)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.error)));
             }
           },
           builder: (context, state) {
@@ -99,19 +103,33 @@ class _fill_profileState extends State<fill_profile> {
                     onTap: () => pickImage(true),
                     child: Stack(
                       children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Colors.grey.shade300,
-                          child: personalImage == null
-                              ? const Icon(Icons.person, size: 50, color: Colors.white)
-                              : ClipOval(
-                                  child: Image.file(
-                                    personalImage!,
-                                    fit: BoxFit.cover,
-                                    width: 100,
-                                    height: 100,
+                        Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Color(0xFF7F56D9), // لون التطبيق
+                              width: 2,
+                            ),
+                          ),
+                          child: CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Colors.grey.shade300,
+                            child: personalImage == null
+                                ? const Icon(
+                                    Icons.person,
+                                    size: 50,
+                                    color: Colors.white,
+                                  )
+                                : ClipOval(
+                                    child: Image.file(
+                                      personalImage!,
+                                      fit: BoxFit.cover,
+                                      width: 100,
+                                      height: 100,
+                                    ),
                                   ),
-                                ),
+                          ),
                         ),
                         Positioned(
                           bottom: 0,
@@ -141,7 +159,11 @@ class _fill_profileState extends State<fill_profile> {
                       width: 327,
                       height: 120,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
+                        border: Border.all(
+                          color: Color(0xFF7F56D9), // لون التطبيق
+                          width: 1.5,
+                        ),
+
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: idImage == null
@@ -150,17 +172,29 @@ class _fill_profileState extends State<fill_profile> {
                               children: const [
                                 Padding(
                                   padding: EdgeInsets.all(12.0),
-                                  child: Icon(Icons.camera_alt, size: 20, color: Colors.grey),
+                                  child: Icon(
+                                    Icons.camera_alt,
+                                    size: 20,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                                 Text(
                                   "Add ID Image",
-                                  style: TextStyle(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.w500),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ],
                             )
                           : ClipRRect(
                               borderRadius: BorderRadius.circular(8),
-                              child: Image.file(idImage!, fit: BoxFit.cover, width: double.infinity),
+                              child: Image.file(
+                                idImage!,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
                             ),
                     ),
                   ),
@@ -179,30 +213,39 @@ class _fill_profileState extends State<fill_profile> {
                       debugPrint("Personal Image: ${personalImage?.path}");
                       debugPrint("ID Image: ${idImage?.path}");
 
-                      if (firstName.isEmpty || lastName.isEmpty || dob.isEmpty || personalImage == null || idImage == null) {
+                      if (firstName.isEmpty ||
+                          lastName.isEmpty ||
+                          dob.isEmpty ||
+                          personalImage == null ||
+                          idImage == null) {
                         String missing = '';
                         if (firstName.isEmpty) missing += ' firstName , ';
                         if (lastName.isEmpty) missing += ' lastName , ';
                         if (dob.isEmpty) missing += 'dob  ';
-                        if (personalImage == null) missing += ' personalImage, ';
+                        if (personalImage == null)
+                          missing += ' personalImage, ';
                         if (idImage == null) missing += ' idImage ';
 
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(" please enter: ${missing.trim().replaceAll(RegExp(r',$'), '')}")),
+                          SnackBar(
+                            content: Text(
+                              " please enter: ${missing.trim().replaceAll(RegExp(r',$'), '')}",
+                            ),
+                          ),
                         );
                         return;
                       }
 
                       context.read<VerifyProfileBloc>().add(
-                            SubmitProfileEvent(
-                              firstName: firstName,
-                              lastName: lastName,
-                              dateOfBirth: dob,
-                              phoneNumber: phone,
-                              personalImage: personalImage!,
-                              idImage: idImage!,
-                            ),
-                          );
+                        SubmitProfileEvent(
+                          firstName: firstName,
+                          lastName: lastName,
+                          dateOfBirth: dob,
+                          phoneNumber: phone,
+                          personalImage: personalImage!,
+                          idImage: idImage!,
+                        ),
+                      );
                     },
                     child: Container(
                       width: 327,
@@ -213,8 +256,16 @@ class _fill_profileState extends State<fill_profile> {
                       ),
                       child: Center(
                         child: state is ProfileLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text("Continue", style: TextStyle(color: Colors.white, fontSize: 18)),
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : const Text(
+                                "Continue",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
+                              ),
                       ),
                     ),
                   ),
@@ -235,7 +286,35 @@ class _fill_profileState extends State<fill_profile> {
         controller: controller,
         decoration: InputDecoration(
           hintText: hint,
-          border: const OutlineInputBorder(),
+          hintStyle: const TextStyle(color: Colors.grey),
+
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(
+              color: Color(0xFF7F56D9), // لون التطبيق
+              width: 1.5,
+            ),
+          ),
+
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(
+              color: Color(0xFF7F56D9), // نفس اللون
+              width: 2,
+            ),
+          ),
+
+          //      
+         /* errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Colors.red, width: 1.5),
+          ),
+
+          //   
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Colors.red, width: 2),
+          ),*/
         ),
       ),
     );

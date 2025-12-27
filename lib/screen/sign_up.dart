@@ -1,13 +1,13 @@
 import 'package:booker/bloc/sign_up_bloc/sign_up_bloc.dart';
 import 'package:booker/bloc/sign_up_bloc/sign_up_event.dart';
 import 'package:booker/bloc/sign_up_bloc/sign_up_state.dart';
+import 'package:booker/model/usermodel.dart';
+import 'package:booker/screen/sign_in.dart';
+import 'package:booker/screen/verify_code_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
-import 'package:booker/model/usermodel.dart';
-import 'package:booker/screen/verify_code_page.dart';
-import 'package:booker/screen/sign_in.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Sign_up extends StatefulWidget {
   const Sign_up({super.key});
@@ -19,6 +19,9 @@ class Sign_up extends StatefulWidget {
 class _Sign_upState extends State<Sign_up> {
   bool _isChecked = false;
   bool _isObscure = true;
+
+  bool _isPhoneError = false;
+  bool _isPasswordError = false;
 
   TextEditingController Phone_Number = TextEditingController();
   TextEditingController Password = TextEditingController();
@@ -34,10 +37,11 @@ class _Sign_upState extends State<Sign_up> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // ================= LOGO =================
                   Column(
                     children: [
                       Image.asset('assets/logo.png', width: 80, height: 105),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Container(
                         width: 52,
                         height: 9,
@@ -48,27 +52,41 @@ class _Sign_upState extends State<Sign_up> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 40),
 
+                  const SizedBox(height: 40),
+
+                  // ================= PHONE FIELD =================
                   SizedBox(
                     width: 327,
                     height: 50,
                     child: TextField(
                       controller: Phone_Number,
-                      //كيبورد أرقام بس
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+
+                      onChanged: (value) {
+                        if (_isPhoneError) {
+                          setState(() {
+                            _isPhoneError = false;
+                          });
+                        }
+                      },
+
                       decoration: InputDecoration(
                         hintText: "Phone Number",
                         enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            color: Color.fromRGBO(127, 86, 217, 1),
+                          borderSide: BorderSide(
+                            color: _isPhoneError
+                                ? Colors.red
+                                : const Color.fromRGBO(127, 86, 217, 1),
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            color: Color.fromRGBO(127, 86, 217, 1),
+                          borderSide: BorderSide(
+                            color: _isPhoneError
+                                ? Colors.red
+                                : const Color.fromRGBO(127, 86, 217, 1),
                             width: 2,
                           ),
                           borderRadius: BorderRadius.circular(8),
@@ -76,21 +94,30 @@ class _Sign_upState extends State<Sign_up> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
 
+                  const SizedBox(height: 20),
+
+                  // ================= PASSWORD FIELD =================
                   SizedBox(
                     width: 327,
                     height: 50,
                     child: TextField(
                       obscureText: _isObscure,
                       controller: Password,
+
+                      onChanged: (value) {
+                        if (_isPasswordError) {
+                          setState(() {
+                            _isPasswordError = false;
+                          });
+                        }
+                      },
+
                       decoration: InputDecoration(
                         hintText: "Password",
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _isObscure
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                            _isObscure ? Icons.visibility_off : Icons.visibility,
                           ),
                           onPressed: () {
                             setState(() {
@@ -99,14 +126,18 @@ class _Sign_upState extends State<Sign_up> {
                           },
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            color: Color.fromRGBO(127, 86, 217, 1),
+                          borderSide: BorderSide(
+                            color: _isPasswordError
+                                ? Colors.red
+                                : const Color.fromRGBO(127, 86, 217, 1),
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            color: Color.fromRGBO(127, 86, 217, 1),
+                          borderSide: BorderSide(
+                            color: _isPasswordError
+                                ? Colors.red
+                                : const Color.fromRGBO(127, 86, 217, 1),
                             width: 2,
                           ),
                           borderRadius: BorderRadius.circular(8),
@@ -114,8 +145,10 @@ class _Sign_upState extends State<Sign_up> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
 
+                  const SizedBox(height: 16),
+
+                  // ================= CHECKBOX =================
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -127,42 +160,42 @@ class _Sign_upState extends State<Sign_up> {
                           });
                         },
                       ),
-                      Text("Agree with terms and privacy"),
+                      const Text("Agree with terms and privacy"),
                     ],
                   ),
-                  SizedBox(height: 40),
 
+                  const SizedBox(height: 40),
+
+                  // ================= SIGN UP BUTTON =================
                   BlocConsumer<SignUpBloc, SignUpState>(
                     listener: (context, state) {
-                        print("📌 Current state: $state");
-
                       if (state is SignUpSuccessState) {
-                         print("✅ Success state reached");
-
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                            
-                                VerifyPage(
-                                  phoneNumber: Phone_Number.text,
-                                  password: Password.text,
-                                  passwordConfirmation: Password.text,
-  
-                                  ),
+                            builder: (context) => VerifyPage(
+                              phoneNumber: Phone_Number.text,
+                              password: Password.text,
+                              passwordConfirmation: Password.text,
+                            ),
                           ),
                         );
                       } else if (state is SignUpErrorState) {
-                           print("❌ Error state reached: ${state.error}");
-
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text(state.error)));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(state.error)),
+                        );
                       }
                     },
                     builder: (context, state) {
                       return InkWell(
                         onTap: () {
+                          setState(() {
+                            _isPhoneError = false;
+                            _isPasswordError = false;
+                          });
+
+                          // ================= VALIDATION =================
+
                           if (Phone_Number.text.isEmpty ||
                               Password.text.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -173,17 +206,28 @@ class _Sign_upState extends State<Sign_up> {
                             return;
                           }
 
-                          if (!_isChecked) {
+                          if (Phone_Number.text.length != 10) {
+                            setState(() {
+                              _isPhoneError = true;
+                            });
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text(
-                                  "You must accept the terms first",
-                                ),
+                                content: Text("Phone number must be 10 digits"),
                               ),
                             );
                             return;
                           }
 
+                          if (!_isChecked) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("You must accept the terms first"),
+                              ),
+                            );
+                            return;
+                          }
+
+                          // ================= SEND DATA =================
                           Usermodel newUser = Usermodel(
                             phone_number: Phone_Number.text,
                             password: Password.text,
@@ -191,9 +235,10 @@ class _Sign_upState extends State<Sign_up> {
                           );
 
                           context.read<SignUpBloc>().add(
-                            SubmitSignUpEvent(user: newUser),
-                          );
+                                SubmitSignUpEvent(user: newUser),
+                              );
                         },
+
                         child: Container(
                           width: 327,
                           height: 52,
@@ -222,6 +267,7 @@ class _Sign_upState extends State<Sign_up> {
               ),
             ),
 
+            // ================= SIGN IN AT BOTTOM =================
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
@@ -246,7 +292,7 @@ class _Sign_upState extends State<Sign_up> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Sign_in(),
+                                builder: (context) => const Sign_in(),
                               ),
                             );
                           },

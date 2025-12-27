@@ -1,5 +1,5 @@
 abstract class VerifyState {}
-
+bool isError = false;
 class VerifyInitState extends VerifyState {}
 
 class VerifyLoadingState extends VerifyState {}
@@ -10,6 +10,7 @@ class VerifySuccessState extends VerifyState {
 }
 
 class VerifyErrorState extends VerifyState {
+  
   final String error;
   VerifyErrorState({required this.error});
 }
