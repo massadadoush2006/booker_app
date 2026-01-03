@@ -3,7 +3,7 @@ import 'package:booker/bloc/profile_bloc/profile_state.dart';
 import 'package:booker/service/profil_auth_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class VerifyProfileBloc extends Bloc<SubmitProfileEvent, ProfileState> {
+class VerifyProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileRepository repository;
 
   VerifyProfileBloc(this.repository) : super(ProfileInitial()) {

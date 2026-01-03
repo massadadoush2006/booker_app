@@ -104,7 +104,7 @@ class _VerifyPageState extends State<VerifyPage> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const fill_profile(),
+                        builder: (context) =>  fill_profile(),
                       ),
                     );
                   } else if (state is VerifyErrorState) {

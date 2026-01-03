@@ -3,6 +3,7 @@ import 'package:booker/bloc/sign_in_bloc/sign_in_event.dart';
 import 'package:booker/bloc/sign_in_bloc/sign_in_state.dart';
 import 'package:booker/model/usermodel.dart';
 import 'package:booker/screen/forgot_password.dart';
+import 'package:booker/screen/home_screen.dart';
 import 'package:booker/screen/sign_up.dart';
 import 'package:booker/service/sign_in_auth_service.dart';
 import 'package:flutter/gestures.dart';
@@ -117,7 +118,9 @@ class _Sign_inState extends State<Sign_in> {
                         hintText: "Password",
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _isObscure ? Icons.visibility_off : Icons.visibility,
+                            _isObscure
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                           ),
                           onPressed: () {
                             setState(() {
@@ -179,20 +182,28 @@ class _Sign_inState extends State<Sign_in> {
                   BlocConsumer<SignInBloc, SignInState>(
                     listener: (context, state) {
                       if (state is SignInSuccessState) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.message)),
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(state.message)));
+
+                        // 🔥 الانتقال إلى صفحة الـ Home
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const HomeScreen()),
                         );
                       } else if (state is SignInErrorState) {
-                        if (state.error.contains("Invalid phone_number or password")) {
+                        if (state.error.contains(
+                          "Invalid phone_number or password",
+                        )) {
                           setState(() {
                             _isPhoneError = true;
                             _isPasswordError = true;
                           });
                         }
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.error)),
-                        );
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(state.error)));
                       }
                     },
                     builder: (context, state) {
@@ -219,8 +230,8 @@ class _Sign_inState extends State<Sign_in> {
                           );
 
                           context.read<SignInBloc>().add(
-                                SubmitSignInEvent(user: user),
-                              );
+                            SubmitSignInEvent(user: user),
+                          );
                         },
                         child: Container(
                           width: 327,
